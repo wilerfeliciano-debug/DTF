@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>DTF Maker</title>
+
+  <link rel="stylesheet" href="style.css">
+  <link rel="manifest" href="manifest.json">
+</head>
+
+<body>
+
+<div class="container">
+
+  <h1>DTF Maker</h1>
+
+  <!-- CONFIGURAÇÃO DA FOLHA -->
+  <h3>Configuração da folha</h3>
+  Largura (cm): <input id="largura" value="57"><br>
+  Altura (cm): <input id="altura" value="30"><br><br>
+
+  <!-- ARTE -->
+  <h3>Arte</h3>
+  <input type="file" id="imagens" accept="image/*" multiple><br><br>
+
+  <!-- TAMANHO DAS IMAGENS -->
+  <h3>Tamanho das Imagens</h3>
+  Largura (cm): <input id="imgLargura" value="5"><br>
+  Altura (cm): <input id="imgAltura" value="5"><br><br>
+
+  <!-- QUANTIDADE -->
+  Quantidade: <input id="quantidade" value="1"><br><br>
+
+  <!-- BOTÕES -->
+  <button onclick="gerar()">Gerar Folha</button>
+  <button onclick="salvar()">Salvar Projeto</button>
+  <button onclick="carregar()">Carregar</button>
+  <button onclick="exportarPDF()">Exportar PDF</button>
+  <button onclick="novaFolha()">Nova Folha</button>
+
+  <br><br>
+
+  <!-- PREVIEW -->
+  <canvas id="canvas"></canvas>
+
+</div>
+
+<!-- SERVICE WORKER -->
+<script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('service-worker.js')
+    .then(() => console.log("Service Worker registrado"))
+    .catch(err => console.log("Erro:", err));
+}
+</script>
+
+<!-- PDF -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<!-- APP -->
+<script src="app.js"></script>
+
+</body>
+</html>
