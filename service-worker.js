@@ -1,6 +1,6 @@
 self.addEventListener("install", e => {
   e.waitUntil(
-    caches.open("botton-app").then(cache => {
+    caches.open("impressao-app").then(cache => {
       return cache.addAll([
         "./",
         "./index.html",
