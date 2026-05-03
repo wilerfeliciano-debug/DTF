@@ -1,9 +1,3 @@
-const DPI = 300;
-
-function cmToPx(cm) {
-  return (cm / 2.54) * DPI;
-}
-
 let posX = 0;
 let posY = 0;
 let linhaAlturaGlobal = 0;
@@ -45,6 +39,7 @@ document.getElementById("imagens").addEventListener("change", function(e) {
         }
 
         carregando--;
+        console.log("Imagem adicionada x" + quantidade);
       };
 
       img.src = event.target.result;
@@ -62,9 +57,17 @@ function gerar() {
   const largura = parseFloat(document.getElementById("largura").value);
   const altura = parseFloat(document.getElementById("altura").value);
 
+  const escala = 800 / largura;
+
   if (carregando > 0) {
     alert("Aguarde as imagens terminarem de carregar");
     return;
+  }
+
+  if (!canvas.dataset.iniciado) {
+    canvas.width = 800;
+    canvas.height = altura * escala;
+    canvas.dataset.iniciado = "true";
   }
 
   if (elementos.length === 0) {
@@ -72,27 +75,12 @@ function gerar() {
     return;
   }
 
-  // 🔥 resolução real (300 DPI)
-  canvas.width = cmToPx(largura);
-  canvas.height = cmToPx(altura);
-
-  ctx.fillStyle = "#ffffff";
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-  ctx.imageSmoothingEnabled = true;
-  ctx.imageSmoothingQuality = "high";
-
-  posX = 0;
-  posY = 0;
-  linhaAlturaGlobal = 0;
-
-  desenharElementos();
+  desenharElementos(escala);
 }
 
 // ===== DESENHO =====
-function desenharElementos() {
+function desenharElementos(escala) {
 
-  const escala = cmToPx(1); // 1cm em pixels
   const espaco = 0.2 * escala;
 
   for (let i = 0; i < elementos.length; i++) {
@@ -115,25 +103,11 @@ function desenharElementos() {
       break;
     }
 
-    // 🔥 manter proporção (sem distorcer)
-    let proporcaoImg = el.img.width / el.img.height;
-    let proporcaoDestino = w / h;
-
-    let drawW, drawH;
-
-    if (proporcaoImg > proporcaoDestino) {
-      drawW = w;
-      drawH = w / proporcaoImg;
-    } else {
-      drawH = h;
-      drawW = h * proporcaoImg;
-    }
-
-    ctx.drawImage(el.img, posX, posY, drawW, drawH);
+    ctx.drawImage(el.img, posX, posY, w, h);
 
     posX += w + espaco;
 
-    if (drawH > linhaAlturaGlobal) linhaAlturaGlobal = drawH;
+    if (h > linhaAlturaGlobal) linhaAlturaGlobal = h;
   }
 
   elementos = [];
@@ -153,11 +127,9 @@ function exportarPDF() {
     format: [largura, altura]
   });
 
-  // 🔥 qualidade máxima
-  const imgData = canvas.toDataURL("image/jpeg", 1.0);
+  const imgData = canvas.toDataURL("image/png");
 
-  pdf.addImage(imgData, "JPEG", 0, 0, largura, altura);
-
+  pdf.addImage(imgData, "PNG", 0, 0, largura, altura);
   pdf.save("layout.pdf");
 }
 
@@ -167,6 +139,7 @@ function novaFolha() {
   posX = 0;
   posY = 0;
   linhaAlturaGlobal = 0;
+  canvas.dataset.iniciado = "";
 }
 
 // ===== SALVAR =====
