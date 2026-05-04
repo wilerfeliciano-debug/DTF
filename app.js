@@ -8,6 +8,10 @@ const ctx = canvas.getContext("2d");
 let elementos = [];
 let carregando = 0;
 
+// ===== CONFIGURAÇÃO DPI =====
+const DPI = 300;
+const PX_POR_CM = DPI / 2.54;
+
 // ===== CARREGAR IMAGENS =====
 document.getElementById("imagens").addEventListener("change", function(e) {
 
@@ -54,19 +58,20 @@ document.getElementById("imagens").addEventListener("change", function(e) {
 // ===== GERAR =====
 function gerar() {
 
-  const largura = parseFloat(document.getElementById("largura").value);
-  const altura = parseFloat(document.getElementById("altura").value);
-
-  const escala = 800 / largura;
+  const larguraCm = parseFloat(document.getElementById("largura").value);
+  const alturaCm = parseFloat(document.getElementById("altura").value);
 
   if (carregando > 0) {
     alert("Aguarde as imagens terminarem de carregar");
     return;
   }
 
+  const larguraPx = Math.round(larguraCm * PX_POR_CM);
+  const alturaPx = Math.round(alturaCm * PX_POR_CM);
+
   if (!canvas.dataset.iniciado) {
-    canvas.width = 800;
-    canvas.height = altura * escala;
+    canvas.width = larguraPx;
+    canvas.height = alturaPx;
     canvas.dataset.iniciado = "true";
   }
 
@@ -75,20 +80,20 @@ function gerar() {
     return;
   }
 
-  desenharElementos(escala);
+  desenharElementos();
 }
 
 // ===== DESENHO =====
-function desenharElementos(escala) {
+function desenharElementos() {
 
-  const espaco = 0.2 * escala;
+  const espaco = 0.2 * PX_POR_CM;
 
   for (let i = 0; i < elementos.length; i++) {
 
     const el = elementos[i];
 
-    const w = el.w * escala;
-    const h = el.h * escala;
+    const w = el.w * PX_POR_CM;
+    const h = el.h * PX_POR_CM;
 
     // quebra linha
     if (posX + w > canvas.width) {
